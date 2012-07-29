@@ -1,5 +1,5 @@
 (function() {
-  var BodyNodeView, EMBuddy, Node, NodeView, Nodes, body_node,
+  var BodyNodeView, EMBuddy, Node, NodeView, Nodes,
     __slice = [].slice;
 
   Node = Backbone.Model.extend({
@@ -18,25 +18,41 @@
         return this.sync_px(true);
       }
     },
-    sync_em: function(silent) {
+    sync: function() {
+      this.sync_em(true);
+      return this.sync_px(false);
+    },
+    sync_em: function(event, val, changes) {
       var em, parent, px;
-      if (silent == null) {
-        silent = false;
+      if (event == null) {
+        event = null;
+      }
+      if (val == null) {
+        val = null;
+      }
+      if (changes == null) {
+        changes = null;
       }
       px = parseInt(this.get("px"));
+      console.log(px);
       parent = this.get("parent");
       em = parent ? px / parseInt(parent.get("px")) : (0.625 * px) / 10;
-      console.log(em);
       return this.set({
         "em": em
       }, {
-        silent: silent
+        silent: !event
       });
     },
-    sync_px: function(silent) {
+    sync_px: function(event, val, changes) {
       var em, parent, px;
-      if (silent == null) {
-        silent = false;
+      if (event == null) {
+        event = null;
+      }
+      if (val == null) {
+        val = null;
+      }
+      if (changes == null) {
+        changes = null;
       }
       em = parseFloat(this.get("em"));
       parent = this.get("parent");
@@ -44,12 +60,36 @@
       this.set({
         "px": px
       }, {
-        silent: silent
+        silent: !event
       });
-      return console.log(em, px, this.parent);
+      if (!!event) {
+        return this.update_children();
+      }
     },
-    add_child: function(child) {
-      return this.get("children").add(child);
+    update_children: function() {
+      var children;
+      children = this.get("children");
+      if (children.length !== 0) {
+        console.log(this.get("px"), this.get("em"));
+      }
+      return children.each(function(child) {
+        return child.sync_em(true);
+      });
+    },
+    add_child: function(child, options) {
+      var children, node;
+      if (options == null) {
+        options = {
+          silent: false
+        };
+      }
+      children = this.get("children");
+      children.add(child);
+      node = children.at(children.length - 1);
+      if (!options.silent) {
+        this.trigger("add_child", node);
+      }
+      return node;
     }
   });
 
@@ -64,22 +104,16 @@
     events: {
       "change input": "input_change"
     },
-    initialize: function(node) {
-      _.bindAll(this, "render", "input_change", "model_change");
+    initialize: function() {
+      _.bindAll(this, "render", "input_change", "model_change", "model_add_child");
       this.set_fields();
-      this.model = this.build_model();
       this.model.bind("change", this.model_change);
+      this.model.bind("add_child", this.model_add_child);
       return this.render();
     },
     set_fields: function() {
       this.px = this.$el.find(".px");
       return this.em = this.$el.find(".em");
-    },
-    build_model: function() {
-      return new Node({
-        parent: this.attributes.parent,
-        px: this.$el.find(".px").val()
-      });
     },
     render: function() {
       return this.update_size("em", "px");
@@ -91,11 +125,16 @@
       return _.each(units, function(unit) {
         var method;
         method = unit === "px" ? parseInt : parseFloat;
-        return _this[unit].val("" + (method(_this.model.get(unit))) + unit);
+        return _this[unit].val("" + (Math.round(method(_this.model.get(unit)) * 1000) / 1000) + unit);
       });
     },
     model_change: function() {
       return this.render();
+    },
+    model_add_child: function(node) {
+      return new NodeView({
+        model: node
+      });
     },
     input_change: function(e) {
       var target;
@@ -111,6 +150,28 @@
   BodyNodeView = NodeView.extend({
     px: null,
     em: null,
+    initialize: function() {
+      var nodes, self;
+      self = this;
+      NodeView.prototype.initialize.call(this);
+      if ((nodes = this.$el.find(".embuddy_viewport > .node"))) {
+        return nodes.each(function() {
+          var $el, em, node, px;
+          $el = $(this);
+          node = self.model.add_child({
+            parent: self.model,
+            px: _.isEmpty((px = $el.find(".px").val())) ? 0 : px,
+            em: _.isEmpty((em = $el.find(".em").val())) ? 0 : em
+          }, {
+            silent: true
+          });
+          return new NodeView({
+            model: node,
+            el: $el
+          });
+        });
+      }
+    },
     events: {
       "change input": "input_change"
     },
@@ -122,15 +183,16 @@
     },
     build_model: function() {
       return this.model;
+    },
+    render: function() {
+      return this.update_size("em", "px");
     }
   });
-
-  body_node = null;
 
   EMBuddy = Backbone.View.extend({
     el: $("#em_buddy"),
     initialize: function() {
-      var body, body_view, node_view;
+      var body, body_node, body_view;
       body = new Node({
         px: 10,
         em: 0.625
@@ -139,14 +201,7 @@
         el: this.$el,
         model: body
       });
-      body_node = body;
-      return node_view = new NodeView({
-        el: $(".node"),
-        parent_node: body,
-        attributes: {
-          parent: body
-        }
-      });
+      return body_node = body;
     }
   });
 

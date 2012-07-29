@@ -8,22 +8,35 @@ Node = Backbone.Model.extend
     @bind "change:px", @sync_em
     @bind "change:em", @sync_px
     @attributes.children = new Nodes
+    
     if @get("px") != 0 then @sync_em(true)
     else if @get("em") != 0 then @sync_px(true)
-  sync_em: (silent = false) ->
+  sync: ->
+    @sync_em(true)
+    @sync_px(false)
+  sync_em: (event = null, val = null, changes = null) ->
     px = parseInt(@get("px"))
+    console.log(px)
     parent = @get "parent"
     em = if parent then px/parseInt(parent.get("px")) else (0.625*px)/10
-    console.log(em)
-    @set {"em": em}, {silent:silent}
-  sync_px: (silent = false) ->
+    @set {"em": em}, {silent:!event}
+  sync_px: (event = null, val = null, changes = null) ->
     em = parseFloat(@get("em"))
     parent = @get "parent"
     px = if parent then em*parseFloat(parent.get("px")) else (em/0.625)*10
-    @set {"px": px}, {silent:silent}
-    console.log(em,px,@parent)
-  add_child: (child) ->
-    @get("children").add child
+    @set {"px": px}, {silent:!event}
+    @update_children() unless !event
+  update_children: ->
+    children = @get("children")
+    console.log @get("px"), @get("em") if children.length != 0
+    children.each (child) ->
+      child.sync_em(true)
+  add_child: (child, options = {silent:false}) ->
+    children = @get("children")
+    children.add child
+    node = children.at(children.length-1)
+    @trigger "add_child", node unless options.silent
+    node
     
 
 Nodes = Backbone.Collection.extend
@@ -35,26 +48,25 @@ NodeView = Backbone.View.extend
   em: null
   events:
     "change input": "input_change"
-  initialize: (node) ->
-    _.bindAll this, "render", "input_change", "model_change"
+  initialize:->
+    _.bindAll this, "render", "input_change", "model_change", "model_add_child"
     @set_fields()
-    @model = @build_model()
     @model.bind "change", @model_change
+    @model.bind "add_child", @model_add_child
     @render()
   set_fields: ->
     @px = @$el.find(".px")
     @em = @$el.find(".em")
-  build_model: ->
-    new Node
-      parent: @attributes.parent
-      px: @$el.find(".px").val()
   render: -> 
     @update_size("em", "px")
   update_size: (units...) ->
     _.each units, (unit) =>
       method = if unit == "px" then parseInt else parseFloat
-      this[unit].val("#{method @model.get unit}#{unit}")
+      this[unit].val("#{Math.round(method(@model.get unit)*1000)/1000}#{unit}")
   model_change: -> @render()
+  model_add_child: (node)->
+    new NodeView
+      model: node
   input_change: (e)->
     target = $(e.target)
     @model.set if target.is @px
@@ -65,6 +77,21 @@ NodeView = Backbone.View.extend
 BodyNodeView = NodeView.extend
   px: null
   em: null
+  initialize: ->
+    self = this
+    NodeView.prototype.initialize.call this
+    if(nodes  = @$el.find(".embuddy_viewport > .node"))
+      nodes.each ->
+        $el = $ this
+        node = self.model.add_child {
+          parent: self.model
+          px: if _.isEmpty((px = $el.find(".px").val())) then 0 else px
+          em: if _.isEmpty((em = $el.find(".em").val())) then 0 else em
+        }, {silent:true}
+        new NodeView
+          model: node
+          el: $el
+        
   events:
     "change input": "input_change"
   set_fields: ->
@@ -73,16 +100,12 @@ BodyNodeView = NodeView.extend
     @em = toolbar.find(".em")
   build_model: ->
     @model
-    
-    
-body_node = null
+  render: -> 
+    @update_size("em", "px")
 
 EMBuddy = Backbone.View.extend
   el: $("#em_buddy")
   initialize: ->
-    #body = new Node
-    #  px: 10
-    #  em: 0.625
     body = new Node
       px: 10
       em: 0.625
@@ -92,12 +115,5 @@ EMBuddy = Backbone.View.extend
       model: body
 
     body_node = body
-
-      
-    node_view = new NodeView
-      el: $(".node")
-      parent_node: body
-      attributes:
-        parent: body
     
 new EMBuddy()

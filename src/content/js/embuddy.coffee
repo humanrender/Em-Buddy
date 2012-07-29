@@ -7,16 +7,15 @@ Node = Backbone.Model.extend
     _.bindAll this, "sync_em", "sync_px"
     @bind "change:px", @sync_em
     @bind "change:em", @sync_px
+    @bind "change", @sync
     @attributes.children = new Nodes
     
     if @get("px") != 0 then @sync_em(true)
     else if @get("em") != 0 then @sync_px(true)
   sync: ->
-    @sync_em(true)
-    @sync_px(false)
+    @update_children()
   sync_em: (event = null, val = null, changes = null) ->
     px = parseInt(@get("px"))
-    console.log(px)
     parent = @get "parent"
     em = if parent then px/parseInt(parent.get("px")) else (0.625*px)/10
     @set {"em": em}, {silent:!event}
@@ -25,10 +24,8 @@ Node = Backbone.Model.extend
     parent = @get "parent"
     px = if parent then em*parseFloat(parent.get("px")) else (em/0.625)*10
     @set {"px": px}, {silent:!event}
-    @update_children() unless !event
   update_children: ->
     children = @get("children")
-    console.log @get("px"), @get("em") if children.length != 0
     children.each (child) ->
       child.sync_em(true)
   add_child: (child, options = {silent:false}) ->
@@ -73,7 +70,6 @@ NodeView = Backbone.View.extend
   set_fields: ->
     @px = @$el.find("> fieldset .px")
     @em = @$el.find("> fieldset .em")
-    console.log @px, @em
   render: -> 
     @update_size("em", "px")
   update_size: (units...) ->

@@ -11,6 +11,7 @@
       _.bindAll(this, "sync_em", "sync_px");
       this.bind("change:px", this.sync_em);
       this.bind("change:em", this.sync_px);
+      this.bind("change", this.sync);
       this.attributes.children = new Nodes;
       if (this.get("px") !== 0) {
         return this.sync_em(true);
@@ -19,8 +20,7 @@
       }
     },
     sync: function() {
-      this.sync_em(true);
-      return this.sync_px(false);
+      return this.update_children();
     },
     sync_em: function(event, val, changes) {
       var em, parent, px;
@@ -34,7 +34,6 @@
         changes = null;
       }
       px = parseInt(this.get("px"));
-      console.log(px);
       parent = this.get("parent");
       em = parent ? px / parseInt(parent.get("px")) : (0.625 * px) / 10;
       return this.set({
@@ -57,21 +56,15 @@
       em = parseFloat(this.get("em"));
       parent = this.get("parent");
       px = parent ? em * parseFloat(parent.get("px")) : (em / 0.625) * 10;
-      this.set({
+      return this.set({
         "px": px
       }, {
         silent: !event
       });
-      if (!!event) {
-        return this.update_children();
-      }
     },
     update_children: function() {
       var children;
       children = this.get("children");
-      if (children.length !== 0) {
-        console.log(this.get("px"), this.get("em"));
-      }
       return children.each(function(child) {
         return child.sync_em(true);
       });
@@ -137,8 +130,7 @@
     },
     set_fields: function() {
       this.px = this.$el.find("> fieldset .px");
-      this.em = this.$el.find("> fieldset .em");
-      return console.log(this.px, this.em);
+      return this.em = this.$el.find("> fieldset .em");
     },
     render: function() {
       return this.update_size("em", "px");

@@ -46,6 +46,7 @@ NodeView = Backbone.View.extend
   parent_node: 1
   px: null
   em: null
+  children_selector: ">"
   events:
     "change input": "input_change"
   initialize:->
@@ -54,9 +55,25 @@ NodeView = Backbone.View.extend
     @model.bind "change", @model_change
     @model.bind "add_child", @model_add_child
     @render()
+    
+    if(nodes  = @$el.find("#{@children_selector} .node"))
+      @init_children(nodes)
+  init_children: (nodes) ->
+    self = this
+    nodes.each ->
+        $el = $ this
+        node = self.model.add_child {
+          parent: self.model
+          px: if _.isEmpty((px = $el.find("> fieldset .px").val())) then 0 else px
+          em: if _.isEmpty((em = $el.find("> fieldset .em").val())) then 0 else em
+        }, {silent:true}
+        new NodeView
+          model: node
+          el: $el
   set_fields: ->
-    @px = @$el.find(".px")
-    @em = @$el.find(".em")
+    @px = @$el.find("> fieldset .px")
+    @em = @$el.find("> fieldset .em")
+    console.log @px, @em
   render: -> 
     @update_size("em", "px")
   update_size: (units...) ->
@@ -77,20 +94,11 @@ NodeView = Backbone.View.extend
 BodyNodeView = NodeView.extend
   px: null
   em: null
+  children_selector: ".embuddy_viewport >"
   initialize: ->
     self = this
     NodeView.prototype.initialize.call this
-    if(nodes  = @$el.find(".embuddy_viewport > .node"))
-      nodes.each ->
-        $el = $ this
-        node = self.model.add_child {
-          parent: self.model
-          px: if _.isEmpty((px = $el.find(".px").val())) then 0 else px
-          em: if _.isEmpty((em = $el.find(".em").val())) then 0 else em
-        }, {silent:true}
-        new NodeView
-          model: node
-          el: $el
+    
         
   events:
     "change input": "input_change"

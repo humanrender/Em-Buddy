@@ -101,19 +101,44 @@
     parent_node: 1,
     px: null,
     em: null,
+    children_selector: ">",
     events: {
       "change input": "input_change"
     },
     initialize: function() {
+      var nodes;
       _.bindAll(this, "render", "input_change", "model_change", "model_add_child");
       this.set_fields();
       this.model.bind("change", this.model_change);
       this.model.bind("add_child", this.model_add_child);
-      return this.render();
+      this.render();
+      if ((nodes = this.$el.find("" + this.children_selector + " .node"))) {
+        return this.init_children(nodes);
+      }
+    },
+    init_children: function(nodes) {
+      var self;
+      self = this;
+      return nodes.each(function() {
+        var $el, em, node, px;
+        $el = $(this);
+        node = self.model.add_child({
+          parent: self.model,
+          px: _.isEmpty((px = $el.find("> fieldset .px").val())) ? 0 : px,
+          em: _.isEmpty((em = $el.find("> fieldset .em").val())) ? 0 : em
+        }, {
+          silent: true
+        });
+        return new NodeView({
+          model: node,
+          el: $el
+        });
+      });
     },
     set_fields: function() {
-      this.px = this.$el.find(".px");
-      return this.em = this.$el.find(".em");
+      this.px = this.$el.find("> fieldset .px");
+      this.em = this.$el.find("> fieldset .em");
+      return console.log(this.px, this.em);
     },
     render: function() {
       return this.update_size("em", "px");
@@ -150,27 +175,11 @@
   BodyNodeView = NodeView.extend({
     px: null,
     em: null,
+    children_selector: ".embuddy_viewport >",
     initialize: function() {
-      var nodes, self;
+      var self;
       self = this;
-      NodeView.prototype.initialize.call(this);
-      if ((nodes = this.$el.find(".embuddy_viewport > .node"))) {
-        return nodes.each(function() {
-          var $el, em, node, px;
-          $el = $(this);
-          node = self.model.add_child({
-            parent: self.model,
-            px: _.isEmpty((px = $el.find(".px").val())) ? 0 : px,
-            em: _.isEmpty((em = $el.find(".em").val())) ? 0 : em
-          }, {
-            silent: true
-          });
-          return new NodeView({
-            model: node,
-            el: $el
-          });
-        });
-      }
+      return NodeView.prototype.initialize.call(this);
     },
     events: {
       "change input": "input_change"

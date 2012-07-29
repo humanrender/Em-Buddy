@@ -1,0 +1,136 @@
+@import "partials/reset";
+
+@mixin inline-block() {
+  display: -moz-inline-stack;
+  display: inline-block;
+  vertical-align: top;
+  zoom: 1;
+  *display: inline;
+}
+
+.inline-block {
+  @include inline-block;
+  letter-spacing:0;
+  word-spacing:0;
+}
+
+.reset-inline-block {
+  letter-spacing: -.31em;
+  word-spacing: -.43em;
+}
+
+.bevan{
+  font-family:Bevan, serif;
+  font-weight:normal!important;
+}
+
+body{
+  font-size:x-small;
+}
+
+h1, h2, h1 + small{
+  @extend .bevan;
+}
+
+h1{
+  font-size:4em;
+  text-align:center;
+}
+
+h1 small{
+  display:block;
+  font-size:.5em;
+}
+
+/* ============ */
+/* = EM Buddy = */
+/* ============ */
+
+@mixin box-flex($flex){
+  -webkit-box-flex: $flex;
+	-moz-box-flex: $flex;
+	box-flex: $flex;
+}
+
+@mixin box{
+  display: -webkit-box;
+	display: -moz-box;
+	display: box;
+}
+
+@mixin vertical-box{
+  @include box;
+	-webkit-box-orient: vertical;
+	-moz-box-orient: vertical;
+	box-orient: vertical;
+}
+
+@mixin horizontal-box{
+  @include box;
+	-webkit-box-orient: horizontal;
+	-moz-box-orient: horizontal;
+	box-orient: horizontal;
+}
+
+body, html{
+  margin:0;
+  padding:0;
+  height:100%;
+}
+
+body{
+}
+
+h1{
+  height:10%;
+}
+
+#em_buddy{
+  width:80%;
+  border:1px solid black;
+  border-radius:10px;
+  margin:10% auto 20%;
+  height:60%;
+  position:relative;
+  
+  font-size:10em;
+}
+
+.embuddy_tools{
+  position:absolute;
+  height:40px;
+  background-color: #666;
+  width:100%;
+  font-size:x-small;
+}
+
+.embuddy_viewport{
+  height:100%;
+  padding-top:40px;
+}
+
+.node{
+  position:relative;
+  height:100%;
+  font-size:.5em;
+}
+
+.node fieldset{
+  @extend .reset-inline-block;
+  position:relative;
+  height:100%;
+  text-align:center;
+}
+
+.node fieldset .equals{
+  @extend .inline-block;
+  vertical-align:baseline;
+}
+
+.node fieldset input{
+  text-align:center;
+  font-size:1em;
+  width:45%;
+  height:100%;
+  border:none;
+}

@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>A Brand New nanoc Site - <%= @item[:title] %></title>
+    <link href='http://fonts.googleapis.com/css?family=Bevan' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="<%= relative_path_to "/css/styles.css" %>" type="text/css" media="screen" title="no title" charset="utf-8">
+    <meta name="generator" content="nanoc <%= Nanoc::VERSION %>"> 
+    
+  </head>
+  <body>
+    
+    <h1>EM Buddy <small>Your friendly em to pixel calculator</small></h1>
+    
+    <%= yield %>
+
+    <script src="<%= relative_path_to "/js/dependencies/jquery.js" %>" type="text/javascript" charset="utf-8"></script>
+    <script src="<%= relative_path_to "/js/dependencies/underscore.js" %>" type="text/javascript" charset="utf-8"></script>
+    <script src="<%= relative_path_to "/js/dependencies/backbone.js" %>" type="text/javascript" charset="utf-8"></script>
+    <script src="<%= relative_path_to "/js/embuddy.js" %>" type="text/javascript" charset="utf-8"></script>
+    
+    <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+  </body>
+</html>

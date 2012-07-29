@@ -1,0 +1,41 @@
+Crashlog created at 2012-07-29 15:54:32 +0200
+
+=== MESSAGE:
+
+NoMethodError: undefined method `find_all' for Gem::Specification:Class
+
+=== COMPILATION STACK:
+
+  (empty)
+
+=== BACKTRACE:
+
+  0. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/nanoc-3.4.0/lib/nanoc/cli/error_handler.rb:262:in `gems_and_versions'
+  1. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/nanoc-3.4.0/lib/nanoc/cli/error_handler.rb:207:in `write_verbose_error'
+  2. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/nanoc-3.4.0/lib/nanoc/cli/error_handler.rb:92:in `block in print_error'
+  3. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/nanoc-3.4.0/lib/nanoc/cli/error_handler.rb:92:in `open'
+  4. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/nanoc-3.4.0/lib/nanoc/cli/error_handler.rb:92:in `print_error'
+  5. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/nanoc-3.4.0/lib/nanoc/cli/error_handler.rb:70:in `rescue in handle_while'
+  6. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/nanoc-3.4.0/lib/nanoc/cli/error_handler.rb:55:in `handle_while'
+  7. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/nanoc-3.4.0/lib/nanoc/cli/error_handler.rb:26:in `handle_while'
+  8. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/nanoc-3.4.0/lib/nanoc/cli/command_runner.rb:13:in `call'
+  9. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/cri-2.3.0/lib/cri/command_dsl.rb:185:in `block in runner'
+  10. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/cri-2.3.0/lib/cri/command.rb:296:in `call'
+  11. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/cri-2.3.0/lib/cri/command.rb:296:in `run_this'
+  12. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/cri-2.3.0/lib/cri/command.rb:249:in `run'
+  13. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/cri-2.3.0/lib/cri/command.rb:262:in `run'
+  14. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/nanoc-3.4.0/lib/nanoc/cli.rb:47:in `block in run'
+  15. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/nanoc-3.4.0/lib/nanoc/cli/error_handler.rb:63:in `handle_while'
+  16. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/nanoc-3.4.0/lib/nanoc/cli/error_handler.rb:26:in `handle_while'
+  17. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/nanoc-3.4.0/lib/nanoc/cli.rb:44:in `run'
+  18. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/gems/nanoc-3.4.0/bin/nanoc:19:in `<top (required)>'
+  19. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/bin/nanoc:19:in `load'
+  20. /Users/hr/.rvm/gems/ruby-1.9.2-p180@embuddy/bin/nanoc:19:in `<main>'
+
+=== VERSION INFORMATION:
+
+nanoc 3.4.0 © 2007-2012 Denis Defreyne.
+Running ruby 1.9.2 (2011-02-18) on x86_64-darwin10.7.0 with RubyGems 1.6.2.
+
+=== INSTALLED GEMS:
+

@@ -1,0 +1,126 @@
+/* ========== */
+/* = RESETS = */
+/* ========== */
+* {
+  margin: 0;
+  padding: 0;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box; }
+
+article, aside, canvas, figure, figure img, figcaption, hgroup,
+footer, header, nav, section, audio, video {
+  display: block; }
+
+a img, fieldset {
+  border: 0; }
+
+body {
+  font-size: x-small;
+  font-family: Arial, Helvetica, sans-serif; }
+
+img {
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none; }
+
+.accessible {
+  display: none; }
+
+button,
+label {
+  cursor: pointer; }
+
+textarea,
+input,
+button,
+legend {
+  outline: none;
+  font-family: Arial, Helvetica, sans-serif; }
+
+input[type="text"],
+textarea {
+  -webkit-appearance: none; }
+
+legend {
+  display: block; }
+
+.inline-block, .node fieldset .equals {
+  display: -moz-inline-stack;
+  display: inline-block;
+  vertical-align: top;
+  zoom: 1;
+  *display: inline;
+  letter-spacing: 0;
+  word-spacing: 0; }
+
+.reset-inline-block, .node fieldset {
+  letter-spacing: -0.31em;
+  word-spacing: -0.43em; }
+
+.bevan, h1, h2, h1 + small {
+  font-family: Bevan, serif;
+  font-weight: normal!important; }
+
+body {
+  font-size: x-small; }
+
+h1 {
+  font-size: 4em;
+  text-align: center; }
+
+h1 small {
+  display: block;
+  font-size: .5em; }
+
+/* ============ */
+/* = EM Buddy = */
+/* ============ */
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%; }
+
+h1 {
+  height: 10%; }
+
+#em_buddy {
+  width: 80%;
+  border: 1px solid black;
+  border-radius: 10px;
+  margin: 10% auto 20%;
+  height: 60%;
+  position: relative;
+  font-size: 10em; }
+
+.embuddy_tools {
+  position: absolute;
+  height: 40px;
+  background-color: #666;
+  width: 100%;
+  font-size: x-small; }
+
+.embuddy_viewport {
+  height: 100%;
+  padding-top: 40px; }
+
+.node {
+  position: relative;
+  height: 100%;
+  font-size: .5em; }
+
+.node fieldset {
+  position: relative;
+  height: 100%;
+  text-align: center; }
+
+.node fieldset .equals {
+  vertical-align: baseline; }
+
+.node fieldset input {
+  text-align: center;
+  font-size: 1em;
+  width: 45%;
+  height: 100%;
+  border: none; }

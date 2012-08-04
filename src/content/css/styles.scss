@@ -1,3 +1,4 @@
+@import "partials/mixins";
 @import "partials/reset";
 
 @mixin inline-block() {
@@ -19,118 +20,137 @@
   word-spacing: -.43em;
 }
 
-.bevan{
-  font-family:Bevan, serif;
-  font-weight:normal!important;
-}
-
 body{
   font-size:x-small;
-}
-
-h1, h2, h1 + small{
-  @extend .bevan;
-}
-
-h1{
-  font-size:4em;
-  text-align:center;
-}
-
-h1 small{
-  display:block;
-  font-size:.5em;
-}
-
-/* ============ */
-/* = EM Buddy = */
-/* ============ */
-
-@mixin box-flex($flex){
-  -webkit-box-flex: $flex;
-	-moz-box-flex: $flex;
-	box-flex: $flex;
-}
-
-@mixin box{
-  display: -webkit-box;
-	display: -moz-box;
-	display: box;
-}
-
-@mixin vertical-box{
-  @include box;
-	-webkit-box-orient: vertical;
-	-moz-box-orient: vertical;
-	box-orient: vertical;
-}
-
-@mixin horizontal-box{
-  @include box;
-	-webkit-box-orient: horizontal;
-	-moz-box-orient: horizontal;
-	box-orient: horizontal;
-}
-
-body, html{
-  margin:0;
-  padding:0;
-  height:100%;
-}
-
-body{
+  max-width:952px;
+  margin:0 auto;
+  padding:0 10px;
 }
 
 h1{
-  height:10%;
+  padding: 20px 0;
+  font-size:2.5em;
 }
 
-#em_buddy{
-  width:80%;
-  border:1px solid black;
+.soft_border{
+  border:1px solid #ddd;
+}
+
+.gray_border{
+  border:1px solid #ccc;
+}
+
+.embuddy{
+  display:block;  
+  @extend .gray_border;
+}
+
+.embuddy, .node, .node_contents{
   border-radius:10px;
-  margin:10% auto 20%;
-  height:60%;
-  position:relative;
-  
-  font-size:10em;
 }
 
-.embuddy_tools{
-  position:absolute;
-  height:40px;
-  background-color: #666;
-  width:100%;
-  font-size:x-small;
-}
-
-.embuddy_viewport{
-  height:100%;
-  padding-top:40px;
-}
+$node_margin:5px;
 
 .node{
-  position:relative;
-  height:100%;
-  font-size:.5em;
+  margin:$node_margin;
 }
 
-.node fieldset{
-  @extend .reset-inline-block;
-  position:relative;
-  height:100%;
+.node .node{
+  margin:$node_margin 0 $node_margin 20px;
+}
+
+.node_utils{
+  display:none;
+}
+
+
+.equals{
+  float:left;
+  width:10%;
   text-align:center;
+  display:block;
 }
 
-.node fieldset .equals{
+.node_font_sizes{
+  width:100%;
+  float:left;
+}
+
+.node_contents{
+  $font_size:2.5em;
+  @extend .gray_border;
+  font-size:x-small;
+  overflow:hidden;
+  background-color:#f5f5f5;
+  padding:10px;
+  
+  .node_utils{
+    display:block;
+  }
+  
+  .node_font_sizes{
+    width:auto;
+  }
+  
+  .equals{
+    font-size:$font_size;
+    line-height:41px;
+    width:auto;
+    padding:0 5px;
+  }
+  
+  .node_utils{
+    float:right;
+  }
+  
+  .text_field input{
+    font-size:$font_size;
+  }
+  
+  .btn{
+    font-size:$font_size;
+  }
+}
+
+.text_field{
+  float:left;
+  input{
+    @extend .soft_border;
+    padding:5px;
+    box-shadow:inset 0 1px 1px rgba(0, 0, 0, 0.075);
+    border-radius:3px;
+    width:100%;
+    display:block;
+  }
+}
+
+.btn{
   @extend .inline-block;
-  vertical-align:baseline;
+  @extend .soft_border;
+  text-decoration:none;
+  font-size:1.2em;
+  border-radius:24px;
+  padding:0.1em 0.7em;
+  
+  box-shadow:inset -1px 2px 2px rgba(0, 0, 0, 0.075);
+  color:#000;
+  
+  background: #ffffff; /* Old browsers */
+  background: -moz-linear-gradient(top, #ffffff 0%, #e6e6e6 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(100%,#e6e6e6)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #ffffff 0%,#e6e6e6 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #ffffff 0%,#e6e6e6 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #ffffff 0%,#e6e6e6 100%); /* IE10+ */
+  background: linear-gradient(to bottom, #ffffff 0%,#e6e6e6 100%); /* W3C */
 }
 
-.node fieldset input{
+.btn_plus{
+}
+
+.icon_btn{
+  width:36px;   
+  height:36px;
   text-align:center;
-  font-size:1em;
-  width:45%;
-  height:100%;
-  border:none;
+  padding:0;
+  line-height:36px;
 }

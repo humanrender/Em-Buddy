@@ -1,123 +1,90 @@
-Node = Backbone.Model.extend
-  em: 0
-  px: 0
-  parent: null
-  children: null
-  initialize: ->
-    _.bindAll this, "sync_em", "sync_px"
-    @bind "change:px", @sync_em
-    @bind "change:em", @sync_px
-    @bind "change", @sync
-    @attributes.children = new Nodes
-    
-    if @get("px") != 0 then @sync_em(true)
-    else if @get("em") != 0 then @sync_px(true)
-  sync: ->
-    @update_children()
-  sync_em: (event = null, val = null, changes = null) ->
-    px = parseInt(@get("px"))
-    parent = @get "parent"
-    em = if parent then px/parseInt(parent.get("px")) else (0.625*px)/10
-    @set {"em": em}, {silent:!event}
-  sync_px: (event = null, val = null, changes = null) ->
-    em = parseFloat(@get("em"))
-    parent = @get "parent"
-    px = if parent then em*parseFloat(parent.get("px")) else (em/0.625)*10
-    @set {"px": px}, {silent:!event}
-  update_children: ->
-    children = @get("children")
-    children.each (child) ->
-      child.sync_em(true)
-  add_child: (child, options = {silent:false}) ->
-    children = @get("children")
-    children.add child
-    node = children.at(children.length-1)
-    @trigger "add_child", node unless options.silent
-    node
-    
-
-Nodes = Backbone.Collection.extend
-  model: Node
-
-NodeView = Backbone.View.extend
-  parent_node: 1
-  px: null
-  em: null
-  children_selector: ">"
+Node = Backbone.View.extend
   events:
-    "change input": "input_change"
-  initialize:->
-    _.bindAll this, "render", "input_change", "model_change", "model_add_child"
-    @set_fields()
-    @model.bind "change", @model_change
-    @model.bind "add_child", @model_add_child
-    @render()
-    
-    if(nodes  = @$el.find("#{@children_selector} .node"))
-      @init_children(nodes)
-  init_children: (nodes) ->
-    self = this
-    nodes.each ->
-        $el = $ this
-        node = self.model.add_child {
-          parent: self.model
-          px: if _.isEmpty((px = $el.find("> fieldset .px").val())) then 0 else px
-          em: if _.isEmpty((em = $el.find("> fieldset .em").val())) then 0 else em
-        }, {silent:true}
-        new NodeView
-          model: node
-          el: $el
-  set_fields: ->
-    @px = @$el.find("> fieldset .px")
-    @em = @$el.find("> fieldset .em")
-  render: -> 
-    @update_size("em", "px")
-  update_size: (units...) ->
-    _.each units, (unit) =>
-      method = if unit == "px" then parseInt else parseFloat
-      this[unit].val("#{Math.round(method(@model.get unit)*1000)/1000}#{unit}")
-  model_change: -> @render()
-  model_add_child: (node)->
-    new NodeView
-      model: node
-  input_change: (e)->
-    target = $(e.target)
-    @model.set if target.is @px
-        {px: target.val()}
-    else if target.is @em
-        {em: target.val()}
-
-BodyNodeView = NodeView.extend
-  px: null
-  em: null
-  children_selector: ".embuddy_viewport >"
+    dragstart: "on_dragstart" 
+    dragend: "on_dragend"
+    dragenter: "on_dragenter"
+    dragover: "on_dragover"
+    dragleave: "on_dragleave"
+    drop: "on_drop"
   initialize: ->
-    self = this
-    NodeView.prototype.initialize.call this
+    _.bindAll this, "on_dragstart", "on_dragend", "on_dragover", "on_dragleave", "on_drop"
+  on_dragstart: (event) ->
+    target = $ event.target
+    original_event = event.originalEvent
+    target.addClass "dragging"
+    original_event.dataTransfer.effectAllowed = 'move'
+    @dragged = target
+    # original_event.dataTransfer.setData('text/html', "<p>1</p>");
+  on_dragend: (event) ->
+    target = $ event.target
+    target.removeClass "dragging"
+  on_dragenter: (event) ->
+    event.preventDefault()
+  on_dragover: (event) ->
+    event.preventDefault()
+    target = $ event.target
+    original_event = event.originalEvent
+    if target.is ".node_contents"
+      target.closest(".node").addClass "over"
+    original_event.dataTransfer.dropEffect = 'move'
+  on_dragleave: (event) ->
+    target = $ event.target
+    if target.is ".node_contents"
+      target.closest(".node").removeClass "over"
+  on_drop: (event) ->
+    console.log(@dragged)
+    target = $ event.target
+    if target.is ".node_contents"
+      target.closest(".node")
+            .removeClass("over")
+      @dragged.insertAfter(target.closest(".node"))
+      @dragged = null
     
-        
-  events:
-    "change input": "input_change"
-  set_fields: ->
-    toolbar = @$el.find(".embuddy_tools")
-    @px = toolbar.find(".px")
-    @em = toolbar.find(".em")
-  build_model: ->
-    @model
-  render: -> 
-    @update_size("em", "px")
-
+  #  dragend: "on_drag_end"
+  #  dragover: "on_drag_over"
+  #  dragenter: "on_drag_enter"
+  #  dragleave: "on_drag_end"
+  #  drop: "on_drop"
+  #initialize: ->
+  #  _.bindAll this, "on_drag_start", "on_drag_end", "on_drag_over", "on_drag_enter", "on_drag_leave", "on_drop", "on_drag_end"
+  #  @drag_source = null
+  #  
+  #on_drag_start: (event) ->
+  #  target = $ event.target
+  #  target.addClass "dragging"
+  #  event.originalEvent.effectAllowed = 'move'
+  #  event.originalEvent.dataTransfer.setData('text/html', target.html());
+  #  @drag_source = event.target
+  #  
+  #on_drag_end: (event) ->
+  #  target = $ event.target
+  #  target.removeClass "dragging"
+  #  $(".node.over").removeClass(".over")
+  #  
+  #on_drag_over: (event) ->
+  #  event.preventDefault()
+  #  event.originalEvent.dataTransfer.dropEffect = 'move'
+  #  return false;
+  #  
+  #on_drag_enter: (event) ->
+  #  console.log $(event.target)
+  #  $(event.target).addClass "over"
+  #  
+  #on_drag_leave: (event) ->
+  #  console.log $(event.target)
+  #  $(event.target).removeClass "over"
+  #
+  #on_drop: (event) ->
+  #  event.preventDefault();
+  #  if (@drag_source != this) 
+  #    $(@drag_source).innerHTML = $(event.target).html();
+  #    $(event.target).innerHTML = event.originalEvent.dataTransfer.getData('text/html');
+  
 EMBuddy = Backbone.View.extend
-  el: $("#em_buddy")
   initialize: ->
-    body = new Node
-      px: 10
-      em: 0.625
-
-    body_view = new BodyNodeView
-      el: @$el
-      model: body
-
-    body_node = body
+    @$el.children(".node").each ->
+      new Node
+        el: $(this)
     
-new EMBuddy()
+app = new EMBuddy
+  el: $("#embuddy")

@@ -53,6 +53,7 @@ $node_margin:5px;
 
 .node{
   margin:$node_margin;
+  cursor: move;
 }
 
 .node .node{
@@ -110,6 +111,14 @@ $node_margin:5px;
   .btn{
     font-size:$font_size;
   }
+}
+
+.node.dragging{
+  opacity:0.2;
+}
+
+.over .node_contents{
+  border-style:dashed;
 }
 
 .text_field{

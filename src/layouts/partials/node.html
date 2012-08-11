@@ -2,21 +2,21 @@
   <div class="node_contents">
     <div class="node_font_sizes">
       <span class="text_field">
-        <input class="node_px" type="text" value="10px"/>
+        <input class="node_px" type="text" value="<%=@px%>px"/>
       </span>
       <span class="equals">=</span>
       <span class="text_field">
-        <input class="node_em" type="text" value="1em"/>
+        <input class="node_em" type="text" value="<%=@em%>em"/>
       </span>
     </div>
     <div class="node_utils">
-      <a href="#" class="btn">Delete</a>
+      <a href="#" class="btn btn-delete">Delete</a>
       <a href="#" class="btn btn_plus icon_btn">+</a>
     </div>
   </div>
-  <% if block_given? %>
   <div class="node_children">
+  <% if block_given? %>
     <%= yield %>
-  </div>
   <% end %>
+  </div>
 </fieldset>

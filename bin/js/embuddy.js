@@ -1,16 +1,17 @@
 (function() {
-  var EMBuddy, Node, app;
+  var EMBuddy, NodeView, app;
 
-  Node = Backbone.View.extend({
+  NodeView = Backbone.View.extend({
     events: {
-      dragstart: "on_dragstart",
-      dragend: "on_dragend",
-      dragenter: "on_dragenter",
-      dragover: "on_dragover",
-      dragleave: "on_dragleave",
-      drop: "on_drop"
+      "dragstart": "on_dragstart",
+      "dragend": "on_dragend",
+      "dragenter": "on_dragenter",
+      "dragover": "on_dragover",
+      "dragleave": "on_dragleave",
+      "drop": "on_drop"
     },
     initialize: function() {
+      console.log(this.$el);
       return _.bindAll(this, "on_dragstart", "on_dragend", "on_dragover", "on_dragleave", "on_drop");
     },
     on_dragstart: function(event) {
@@ -27,9 +28,6 @@
       return target.removeClass("dragging");
     },
     on_dragenter: function(event) {
-      return event.preventDefault();
-    },
-    on_dragover: function(event) {
       var original_event, target;
       event.preventDefault();
       target = $(event.target);
@@ -39,6 +37,9 @@
       }
       return original_event.dataTransfer.dropEffect = 'move';
     },
+    on_dragover: function(event) {
+      return event.preventDefault();
+    },
     on_dragleave: function(event) {
       var target;
       target = $(event.target);
@@ -47,23 +48,23 @@
       }
     },
     on_drop: function(event) {
-      var target;
-      console.log(this.dragged);
+      var container, node, target;
       target = $(event.target);
-      if (target.is(".node_contents")) {
-        target.closest(".node").removeClass("over");
-        this.dragged.insertAfter(target.closest(".node"));
-        return this.dragged = null;
+      node = target.closest(".node").removeClass("over");
+      if (node.is(this.dragged)) {
+        this.dragged = null;
+        return false;
       }
+      container = target.is(".node_contents") ? node.children(".node_children") : target.is(".node_children") ? target : node.children(".node_children");
+      container.prepend(this.dragged);
+      return this.dragged = null;
     }
   });
 
   EMBuddy = Backbone.View.extend({
     initialize: function() {
-      return this.$el.children(".node").each(function() {
-        return new Node({
-          el: $(this)
-        });
+      return new NodeView({
+        el: this.$el
       });
     }
   });

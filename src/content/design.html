@@ -1,12 +1,14 @@
 <form class="embuddy" id="embuddy">
-  
-  <% render "partials/node" do %>
-    <%= render "partials/node" %>
-    <% render "partials/node" do %>
-      <%= render "partials/node" %>
-      <%= render "partials/node" %>
+  <% node 10, 1 do %>
+    <% node 20, 2 do %>
+      <%= node 30, 3 %>
+      <%= node 40, 4 %>
+      <%= node 50, 5 %>
     <% end %>
-    <%= render "partials/node" %>
+    <%= node 60, 6 %>
+    <%= node 70, 7 %>
+    <%= node 80, 8 %>
+    <%= node 90, 9 %>
   <% end %>
   
-</fom>
+</form>
